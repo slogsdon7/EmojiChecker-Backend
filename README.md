@@ -1,6 +1,5 @@
 # EmojiChecker-Backend
 
-<<<<<<< HEAD
 ## Dev Environment Setup
 1. [Install Pipenv](https://pipenv.readthedocs.io/en/latest/)
 2. >git clone https://github.com/ptstory/EmojiChecker-Backend.git
@@ -30,8 +29,3 @@
 [Django-Rest-Framework](http://www.django-rest-framework.org/)
 
 
-=======
-## Resources
-
-[How to send an SMS using AWS](https://docs.aws.amazon.com/sns/latest/dg/sms_publish-to-phone.html)
->>>>>>> refs/remotes/origin/master
