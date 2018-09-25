@@ -9,7 +9,7 @@
 5. Activate environment 
     >pipenv shell
 6. Make our migrations
-    >python makemigrations api
+    >python manage.py makemigrations api
 7. Run migrations
     >python manage.py migrate
 8. Run test server 
