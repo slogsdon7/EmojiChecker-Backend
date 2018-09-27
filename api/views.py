@@ -1,5 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response as APIResponse
+from rest_framework import viewsets
 from rest_framework.reverse import reverse
 from api.serializers import EmojiSerializer, MessageSerializer, ResponseSerializer, ScheduleSerializer
 from api.models import Emoji, Message, Response, Schedule
@@ -47,6 +48,12 @@ class ResponseViewSet(viewsets.ModelViewSet):
         response = Response.objects.create(user=request.user, emoji=emoji)
         return APIResponse(data=ResponseSerializer(instance=response).data, status=status.HTTP_201_CREATED)
 
+    permission_classes = (IsOwnerReadOnly,)
+    queryset = Response.objects.all()
+
+    def create(self, request):
+        """TODO: Validate message to ensure it isn't a duplicate"""
+        pass
 
 
 class ScheduleViewSet(viewsets.ModelViewSet):
