@@ -1,6 +1,12 @@
 {% extends "rest_framework/base.html" %}
     {% block title %}{% if name %}{{ name }} – {% endif %}Emoji Checker Backend{% endblock %}
 
+{% block style %}
+    {{ block.super }}
+    {% load static %}
+    <link rel="shortcut icon" href="{%  static 'api/favicon.ico' %}">
+{% endblock %}
+
 {% block branding %}
     <a class='navbar-brand' rel="nofollow" href="/">
     Emoji Checker Backend
