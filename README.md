@@ -6,16 +6,21 @@
 3. >cd EmojiChecker-Backend
 4. Install dependencies 
     >pipenv install
-5. Activate environment 
-    >pipenv shell
+5. Activate environment
+    >pipenv shell 
 6. Make our migrations
     >python manage.py makemigrations api
 7. Run migrations
     >python manage.py migrate
 8. Run test server 
-    >python manage.py runserver --settings 'emoji.settings_dev'
-    
+    >python manage.py runserver
+   
+
 [View in action](http://ec2-184-72-136-95.compute-1.amazonaws.com:8080/auth/)
+
+## Running tests
+>python manage.py test
+
 
 ## Additional notes
 - The developer environment is set to use sqlite for the database, even though we are using MySQL for production. Sqlite should be perfectly fine for development and requires zero configuration to get going.

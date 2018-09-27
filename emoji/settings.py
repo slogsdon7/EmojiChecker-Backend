@@ -38,14 +38,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'phonenumber_field',
-    'allauth.account',
     'rest_auth.registration',
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
+    'drf_yasg',
     'api',
 ]
 SITE_ID = 1
+
 
 DATABASES = {
     'default': {
@@ -69,13 +70,26 @@ MIDDLEWARE = [
 PHONENUMBER_DB_FORMAT = 'E164'
 ROOT_URLCONF = 'emoji.urls'
 
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+      'Basic': {
+            'type': 'basic'
+      },
+      'Token': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+   }
+}
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication'
-    )
+    ),
 }
 TEMPLATES = [
     {
