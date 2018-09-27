@@ -25,6 +25,7 @@ class ResponseSerializer(serializers.ModelSerializer):
         fields = ('emoji', 'ts', 'user')
         read_only_fields = ('user',)
 
+
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
