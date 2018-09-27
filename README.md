@@ -1,5 +1,9 @@
 # EmojiChecker-Backend
+[emoji-survey.me](http://emoji-survey.me) 
 
+[emoji-survey.me/auth](http://emoji-survey.me/auth)
+
+[emoji-survey.me/swagger](http://emoji-survey.me/swagger) 
 ## Dev Environment Setup
 1. [Install Pipenv](https://pipenv.readthedocs.io/en/latest/)
 2. >git clone https://github.com/ptstory/EmojiChecker-Backend.git
@@ -15,8 +19,6 @@
 8. Run test server 
     >python manage.py runserver
    
-
-[View in action](http://ec2-184-72-136-95.compute-1.amazonaws.com:8080/auth/)
 
 ## Running tests
 >python manage.py test
