@@ -11,6 +11,8 @@ djoser = "*"
 whitenoise = "*"
 coreapi = "*"
 drf-yasg = {version = "*", extras = ["validation"]}
+"boto3" = "*"
+moto = "*"
 
 [dev-packages]
 
