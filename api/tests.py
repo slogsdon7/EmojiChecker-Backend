@@ -26,13 +26,20 @@ staffUser={
     'birth_date': '1969-04-20',
     'is_staff': True}
 
+class AppUserTestCase(APITestCase):
+    """Extend this class when testing App User methods"""
+    def setUp(self):
+        user = User.objects.create_user(**appUser)
+        self.client.force_authenticate(user)
 
-
-class ScheduleTestCaseStaff(APITestCase):
-
+class AdminUserTestCase(APITestCase):
+    """Extend this class when testing Administration methods"""
     def setUp(self):
         user = User.objects.create_user(**staffUser)
         self.client.force_authenticate(user)
+
+
+class ScheduleAdminTestCase(AdminUserTestCase):
 
     def test_list_view(self):
         url = reverse('schedule-list')
@@ -57,10 +64,8 @@ class ScheduleTestCaseStaff(APITestCase):
 
 
 
-class ScheduleTestCaseAppUser(APITestCase):
-    def setUp(self):
-        user = User.objects.create_user(**appUser)
-        self.client.force_authenticate(user)
+class ScheduledUserTestCase(AppUserTestCase):
+
 
     def test_list_view(self):
         url = reverse('schedule-list')
@@ -69,3 +74,14 @@ class ScheduleTestCaseAppUser(APITestCase):
 
 
 
+class ResponseUserTestCase(AppUserTestCase):
+    pass
+
+class ResponseAdminTestCase(AdminUserTestCase):
+    pass
+
+class EmojiUserTestCase(AppUserTestCase):
+    pass
+
+class EmojiAdminTestCase(AdminUserTestCase):
+    pass
