@@ -1,11 +1,9 @@
-from django.contrib.auth import get_user_model
 from django.urls import path, re_path, include
-from djoser.views import UserViewSet
 from api.views import EmojiViewSet, MessageViewSet, ResponseViewSet, ScheduleViewSet
 from rest_framework import routers, permissions
-from rest_framework.schemas import get_schema_view
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -21,8 +19,10 @@ schema_view = get_schema_view(
 router = routers.DefaultRouter()
 router.register('emoji',EmojiViewSet)
 router.register('messages',MessageViewSet)
-router.register('responses', ResponseViewSet)
+router.register('responses', ResponseViewSet, base_name='responses')
 router.register('schedule', ScheduleViewSet)
+
+
 urlpatterns = router.urls
 urlpatterns += [
     re_path(r'^auth/', include('djoser.urls')),
