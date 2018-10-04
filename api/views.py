@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response as APIResponse
 from api.serializers import EmojiSerializer, MessageSerializer, ResponseSerializer, ScheduleSerializer
-from api.models import Emoji, Message, Response, Schedule
+from api.models import Emoji, Message, Response, Schedule, SendLog
 from rest_framework import permissions
 
 class IsAdminOrReadOnly(permissions.BasePermission):
@@ -33,7 +33,6 @@ class MessageViewSet(viewsets.ModelViewSet):
 class ResponseViewSet(viewsets.ModelViewSet):
     serializer_class = ResponseSerializer
     permission_classes = (IsOwnerReadOnly, permissions.IsAuthenticated)
-
     def get_queryset(self):
         if self.request.user.is_staff:
             return Response.objects.all()
@@ -41,8 +40,16 @@ class ResponseViewSet(viewsets.ModelViewSet):
 
     def create(self, request, format=None):
         emoji = Emoji.objects.get(name=request.data['emoji'])
-        response = Response.objects.create(user=request.user, emoji=emoji)
-        return APIResponse(data=ResponseSerializer(instance=response).data, status=status.HTTP_201_CREATED)
+        response = Response(user=request.user, emoji=emoji)
+        sendlog = SendLog.objects.filter(success=True).filter(user=request.user).order_by('-ts')[0]
+        if sendlog.response is None:
+            response.save()
+            sendlog.response = response
+            sendlog.save()
+            api_response = APIResponse(data=ResponseSerializer(instance=response).data, status=status.HTTP_201_CREATED)
+        else:
+            api_response = APIResponse(status=status.HTTP_409_CONFLICT)
+        return api_response
 
 
 

@@ -35,10 +35,12 @@ class Message(models.Model):
         return self.name
 
 
+
 class Response(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     emoji = models.ForeignKey(Emoji, on_delete=models.DO_NOTHING)
     ts = models.DateTimeField(auto_now_add=True)
+
 
 
 class ScheduleManager(models.Manager):
@@ -49,7 +51,7 @@ class ScheduleManager(models.Manager):
 
 class Schedule(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE)
-    send_at = models.DateTimeField()
+    send_at = models.DateTimeField(help_text="Use ISO 8601 format")
     sent = models.BooleanField(default=False)
     objects = ScheduleManager()
 
@@ -72,6 +74,7 @@ class Schedule(models.Model):
 
 
 class SendLog(models.Model):
+    response = models.OneToOneField(Response, on_delete=models.CASCADE, null=True)
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     ts = models.DateTimeField(auto_now_add=True)
