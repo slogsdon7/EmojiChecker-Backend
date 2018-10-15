@@ -1,8 +1,10 @@
+from rest_framework import permissions
 from rest_framework import viewsets, status
 from rest_framework.response import Response as APIResponse
-from api.serializers import EmojiSerializer, MessageSerializer, ResponseSerializer, ScheduleSerializer
+
 from api.models import Emoji, Message, Response, Schedule, SendLog
-from rest_framework import permissions
+from api.serializers import EmojiSerializer, MessageSerializer, ResponseSerializer, ScheduleSerializer
+
 
 class IsAdminOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -43,7 +45,7 @@ class ResponseViewSet(viewsets.ModelViewSet):
 
     def create(self, request, format=None):
         """Respond to the most recent message. Returns 403 if you've already responded"""
-        emoji = Emoji.objects.get(name=request.data['emoji'])
+        emoji, created = Emoji.objects.get_or_create(name=request.data['emoji'])
         response = Response(user=request.user, emoji=emoji)
         try:
             sendlog = SendLog.objects.filter(success=True).filter(user=request.user).order_by('-ts')[0]
