@@ -12,6 +12,9 @@ whitenoise = "*"
 coreapi = "*"
 drf-yasg = {version = "*", extras = ["validation"]}
 "boto3" = "*"
+sentry-sdk = "*"
+coverage = "*"
+django-workers = "*"
 
 [dev-packages]
 
