@@ -1,9 +1,9 @@
-from django.urls import path, re_path, include
-from api.views import EmojiViewSet, MessageViewSet, ResponseViewSet, ScheduleViewSet
-from rest_framework import routers, permissions
-from drf_yasg.views import get_schema_view
+from django.urls import re_path, include
 from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import routers, permissions
 
+from api.views import EmojiViewSet, MessageViewSet, ResponseViewSet, ScheduleViewSet, SendLogViewSet
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -21,6 +21,7 @@ router.register('emoji',EmojiViewSet)
 router.register('messages',MessageViewSet)
 router.register('responses', ResponseViewSet, base_name='responses')
 router.register('schedule', ScheduleViewSet)
+router.register('sendlog', SendLogViewSet)
 
 
 urlpatterns = router.urls

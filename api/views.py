@@ -3,7 +3,8 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response as APIResponse
 
 from api.models import Emoji, Message, Response, Schedule, SendLog
-from api.serializers import EmojiSerializer, MessageSerializer, ResponseSerializer, ScheduleSerializer
+from api.serializers import EmojiSerializer, MessageSerializer, ResponseSerializer, ScheduleSerializer, \
+    SendLogSerializer
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
@@ -38,6 +39,7 @@ class ResponseViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'delete']
     serializer_class = ResponseSerializer
     permission_classes = (IsOwnerReadOnly, permissions.IsAuthenticated)
+    filter_fields = ('user',)
     def get_queryset(self):
         if self.request.user.is_staff:
             return Response.objects.all()
@@ -68,3 +70,8 @@ class ScheduleViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAdminUser,)
     queryset = Schedule.objects.all()
 
+
+class SendLogViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (permissions.IsAdminUser,)
+    serializer_class = SendLogSerializer
+    queryset = SendLog.objects.all().order_by('-ts')

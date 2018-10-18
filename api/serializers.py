@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Emoji, Schedule, Response, Message
+from api.models import Emoji, Schedule, Response, Message, SendLog, User
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -15,16 +15,21 @@ class EmojiSerializer(serializers.ModelSerializer):
         fields = ('name', 'description', 'emoji')
 
 
-class ScheduleSerializer(serializers.ModelSerializer):
 
+class ScheduleSerializer(serializers.ModelSerializer):
+    users = serializers.PrimaryKeyRelatedField(many=True, read_only=False, queryset=User.objects.all())
     class Meta:
         model = Schedule
-        fields = ('send_at', 'message', 'sent')
+        fields = ('send_at', 'message', 'sent', 'users')
         read_only_fields = ('sent',)
 
 
 class ScheduleListSerializer(ScheduleSerializer):
     message = MessageSerializer
+
+    class Meta:
+        model = Schedule
+        fields = ('__all__',)
 
 
 class ResponseSerializer(serializers.ModelSerializer):
@@ -34,3 +39,7 @@ class ResponseSerializer(serializers.ModelSerializer):
         read_only_fields = ('user',)
 
 
+class SendLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SendLog
+        fields = '__all__'
