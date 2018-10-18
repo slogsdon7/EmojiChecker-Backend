@@ -35,7 +35,7 @@ class MessageViewSet(viewsets.ModelViewSet):
 
 
 class ResponseViewSet(viewsets.ModelViewSet):
-    http_method_names = ['get', 'post', 'put', 'delete']
+    http_method_names = ['get', 'post', 'delete']
     serializer_class = ResponseSerializer
     permission_classes = (IsOwnerReadOnly, permissions.IsAuthenticated)
     def get_queryset(self):
@@ -44,7 +44,7 @@ class ResponseViewSet(viewsets.ModelViewSet):
         return Response.objects.filter(user=self.request.user)
 
     def create(self, request, format=None):
-        """Respond to the most recent message. Returns 403 if you've already responded"""
+        """Respond to the most recent message. Returns 403 if user has already responded"""
         emoji, created = Emoji.objects.get_or_create(name=request.data['emoji'])
         response = Response(user=request.user, emoji=emoji)
         try:

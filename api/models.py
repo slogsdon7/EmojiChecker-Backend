@@ -14,8 +14,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['birth_date', 'phone_number', 'first_name', 'last_name', 'email']
 
     def send_message(self, sms_obj):
-        sent = sms_obj.send(self.phone_number)
-        return sent
+        return sms_obj.send(self.phone_number)
 
 
 class Emoji(models.Model):
@@ -60,22 +59,16 @@ class Schedule(models.Model):
     def send_scheduled_message(self):
         users = User.objects.filter(is_current_subject=True)
         sms_obj = SMS(message=self.message.text)
-        success_count = 0
-        error_count = 0
 
         for user in users:
-            sent = user.send_message(sms_obj)
-            if sent:
-                success_count += 1
-                self.sendlog_set.create(user=user, success=True)
+            response = user.send_message(sms_obj)
+            if 'MessageID' in response:
+                self.sendlog_set.create(success=True, user=user)
             else:
-                error_count += 1
-                self.sendlog_set.create(user=user, success=False, log_message="Error")
+                self.sendlog_set.create(success=False, log_message=response, user=user)
+
         self.sent = True
         self.save()
-        return {'success_count': success_count,
-                'error_count': error_count}
-
 
 
 class SendLog(models.Model):
@@ -85,3 +78,6 @@ class SendLog(models.Model):
     ts = models.DateTimeField(auto_now_add=True)
     success = models.BooleanField()
     log_message = models.TextField(null=True)
+
+    def __str__(self):
+        return f'{self.ts} - {self.success} - {self.log_message}'

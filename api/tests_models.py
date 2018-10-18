@@ -1,6 +1,8 @@
-from django.test import TestCase
-from api.models import Schedule, Message, User
 from datetime import datetime
+
+from django.test import TestCase
+
+from api.models import Schedule, Message, User
 from api.sms import SMS
 from api.tests import appUser
 
@@ -18,7 +20,7 @@ class TestSchedule(TestCase):
     def test_send_message(self):
         schedule = Schedule.objects.check_schedule()[0]
         result = schedule.send_scheduled_message()
-        self.assertEqual(result['success_count'], 1)
+        self.assertEqual(schedule.sent, True)
 
 
 class TestUser(TestCase):
@@ -29,7 +31,4 @@ class TestUser(TestCase):
         user = User.objects.create(**appUser)
         sms_obj = SMS(message="test")
         result = user.send_message(sms_obj)
-        self.assertEqual(result, True)
-
-
-
+        self.assertEqual(result, {'MessageID': 'Test'})
