@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from api.models import Emoji, Schedule, Response, Message
 
 
@@ -7,6 +8,7 @@ class MessageSerializer(serializers.ModelSerializer):
         model = Message
         fields = ('id', 'name', 'text')
 
+
 class EmojiSerializer(serializers.ModelSerializer):
     class Meta:
         model = Emoji
@@ -14,12 +16,15 @@ class EmojiSerializer(serializers.ModelSerializer):
 
 
 class ScheduleSerializer(serializers.ModelSerializer):
-    message = MessageSerializer()
 
     class Meta:
         model = Schedule
         fields = ('send_at', 'message', 'sent')
         read_only_fields = ('sent',)
+
+
+class ScheduleListSerializer(ScheduleSerializer):
+    message = MessageSerializer
 
 
 class ResponseSerializer(serializers.ModelSerializer):

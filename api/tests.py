@@ -1,9 +1,10 @@
+from datetime import datetime
+
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from api.models import Emoji, User, Schedule, Message
-from datetime import datetime
 
+from api.models import User, Schedule, Message
 
 appUser = {
     'username' : 'app_user',
@@ -84,11 +85,9 @@ class EmojiUserTestCase(AppUserTestCase):
     pass
 
 class EmojiAdminTestCase(AdminUserTestCase):
-    pass
-
-
-
-
-
-
-
+    def create(self):
+        url = reverse('emoji-list')
+        data = {'name': 'Moon',
+                'emoji': '🌚'}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
