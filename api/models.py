@@ -53,7 +53,7 @@ class ScheduleManager(models.Manager):
 class Schedule(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE)
     send_at = models.DateTimeField(help_text="Use ISO 8601 format. All times are UTC.")
-    users = models.ManyToManyField(User, through='ScheduleUserGroup')
+    users = models.ManyToManyField(User)
     sent = models.BooleanField(default=False,
                                help_text="Does not indicate success/failure, only whether an attempt was made")
     objects = ScheduleManager()
@@ -73,9 +73,6 @@ class Schedule(models.Model):
         self.save()
 
 
-class ScheduleUserGroup(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
 
 
 class SendLog(models.Model):
