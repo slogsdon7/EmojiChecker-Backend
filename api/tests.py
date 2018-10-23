@@ -48,10 +48,11 @@ class ScheduleAdminTestCase(AdminUserTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_create(self):
+        user = User.objects.create(**appUser)
         msg = Message.objects.create(text='Test message', name='test')
         url = reverse('schedule-list')
         dt = datetime(2018, 11, 4, 12)
-        data = {'send_at': dt.isoformat(), 'message': msg.id}
+        data = {'send_at': dt.isoformat(), 'message': msg.id, 'users': [user.id]}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 

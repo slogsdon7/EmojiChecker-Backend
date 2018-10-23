@@ -52,12 +52,14 @@ class ScheduleManager(models.Manager):
 
 class Schedule(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE)
-    send_at = models.DateTimeField(help_text="Use ISO 8601 format")
-    sent = models.BooleanField(default=False)
+    send_at = models.DateTimeField(help_text="Use ISO 8601 format. All times are UTC.")
+    users = models.ManyToManyField(User)
+    sent = models.BooleanField(default=False,
+                               help_text="Does not indicate success/failure, only whether an attempt was made")
     objects = ScheduleManager()
 
     def send_scheduled_message(self):
-        users = User.objects.filter(is_current_subject=True)
+        users = self.users.all()
         sms_obj = SMS(message=self.message.text)
 
         for user in users:
@@ -69,6 +71,8 @@ class Schedule(models.Model):
 
         self.sent = True
         self.save()
+
+
 
 
 class SendLog(models.Model):

@@ -15,6 +15,7 @@ drf-yasg = {version = "*", extras = ["validation"]}
 sentry-sdk = "*"
 coverage = "*"
 django-workers = "*"
+django-filter = "*"
 
 [dev-packages]
 
