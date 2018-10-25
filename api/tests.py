@@ -77,13 +77,21 @@ class ScheduledUserTestCase(AppUserTestCase):
 
 
 class ResponseUserTestCase(AppUserTestCase):
-    pass
+    def create(self):
+        url = reverse('response-list')
+        data = {}
+
 
 class ResponseAdminTestCase(AdminUserTestCase):
     pass
 
 class EmojiUserTestCase(AppUserTestCase):
-    pass
+    def create(self):
+        url = reverse('emoji-list')
+        data = {'name': 'Moon',
+                'emoji': '🌚'}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 class EmojiAdminTestCase(AdminUserTestCase):
     def create(self):
