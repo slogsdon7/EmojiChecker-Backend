@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -6,6 +6,8 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 from api.sms import SMS
 
+def get_expiration():
+    return datetime.now() + timedelta(minutes=10)
 
 class User(AbstractUser):
     phone_number = PhoneNumberField(unique=True, help_text="Use E164 Format")
@@ -57,6 +59,7 @@ class Schedule(models.Model):
     sent = models.BooleanField(default=False,
                                help_text="Does not indicate success/failure, only whether an attempt was made")
     objects = ScheduleManager()
+    expiration = models.DateTimeField(default=get_expiration)
 
     def send_scheduled_message(self):
         users = self.users.all()
