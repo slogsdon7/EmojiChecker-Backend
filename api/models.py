@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
 
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
 from api.sms import SMS
+
 
 def get_expiration():
     return datetime.now() + timedelta(minutes=10)
@@ -44,6 +46,23 @@ class Response(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     emoji = models.ForeignKey(Emoji, on_delete=models.DO_NOTHING)
     ts = models.DateTimeField(auto_now_add=True)
+
+    def check_expiration(self, expiration=600):
+        ts = self.sendlog.ts
+        td = timedelta(seconds=expiration)
+        expire_time = ts + td
+        if (datetime.now() - expire_time).total_seconds() < 0:
+            return True
+        return False
+
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        if not self.check_expiration():
+            raise ValidationError(_("Response was too late"))
+
+
+
+
 
 
 class ScheduleManager(models.Manager):
@@ -88,3 +107,4 @@ class SendLog(models.Model):
 
     def __str__(self):
         return f'{self.ts} - {self.success} - {self.log_message}'
+
