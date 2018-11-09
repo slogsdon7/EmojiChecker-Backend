@@ -60,6 +60,9 @@ class Response(models.Model):
         if not self.check_expiration():
             raise ValidationError(_("Response was too late"))
 
+    def save(self, *args, **kwargs):
+        self.clean_fields()
+        super().save(*args, **kwargs)
 
 
 
