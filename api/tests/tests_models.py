@@ -2,9 +2,9 @@ from datetime import datetime
 
 from django.test import TestCase
 
-from api.models import Schedule, Message, User
+from api.models import Schedule, Message, User, SendLog, Response, Emoji
 from api.sms import SMS
-from api.tests import appUser
+from api.tests.tests import appUser
 
 
 class TestSchedule(TestCase):
@@ -32,3 +32,14 @@ class TestUser(TestCase):
         sms_obj = SMS(message="test")
         result = user.send_message(sms_obj)
         self.assertEqual(result, {'MessageID': 'Test'})
+
+
+class TestResponse(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(**appUser)
+        self.sendlog = SendLog.objects.create(user=self.user, success=True)
+        self.emoji = Emoji.objects.create(name="Thunk")
+
+    def test_response_save(self):
+        resp = Response(user=self.user, emoji=self.emoji)
