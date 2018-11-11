@@ -58,14 +58,11 @@ class Response(models.Model):
     def clean_fields(self, exclude=None):
         super().clean_fields(exclude=exclude)
         if not self.check_expiration():
-            raise ValidationError(_("Response was too late"))
+            raise ValidationError("Response was too late")
 
     def save(self, *args, **kwargs):
         self.clean_fields()
         super().save(*args, **kwargs)
-
-
-
 
 
 class ScheduleManager(models.Manager):
@@ -81,7 +78,8 @@ class Schedule(models.Model):
     sent = models.BooleanField(default=False,
                                help_text="Does not indicate success/failure, only whether an attempt was made")
     objects = ScheduleManager()
-    expiration = models.DateTimeField(default=get_expiration)
+    expiration = models.IntegerField(default=600,
+                                     help_text="The amount of seconds from the time the message is sent that a response should be accepted")
 
     def send_scheduled_message(self):
         users = self.users.all()
@@ -101,13 +99,12 @@ class Schedule(models.Model):
 
 
 class SendLog(models.Model):
-    response = models.OneToOneField(Response, on_delete=models.CASCADE, null=True)
-    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE, null=True)
+    response = models.OneToOneField(Response, on_delete=models.CASCADE, null=True, blank=True)
+    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     ts = models.DateTimeField(auto_now_add=True)
     success = models.BooleanField()
-    log_message = models.TextField(null=True)
+    log_message = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f'{self.ts} - {self.success} - {self.log_message}'
-

@@ -18,6 +18,7 @@ django-workers = "*"
 django-filter = "*"
 
 [dev-packages]
+factory-boy = "*"
 
 [requires]
 python_version = "3.7"

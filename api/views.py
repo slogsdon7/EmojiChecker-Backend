@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from rest_framework import permissions
 from rest_framework import viewsets, status
 from rest_framework.response import Response as APIResponse
@@ -6,6 +7,8 @@ from api.models import Emoji, Message, Response, Schedule, SendLog
 from api.serializers import EmojiSerializer, MessageSerializer, ResponseSerializer, ScheduleSerializer, \
     SendLogSerializer
 
+# TODO: quick-fix for testing purposes. Turn into a config variable.
+CHECK_SEND_LOG = True
 
 class IsAdminOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -49,15 +52,23 @@ class ResponseViewSet(viewsets.ModelViewSet):
         """Respond to the most recent message. Returns 403 if user has already responded"""
         emoji, created = Emoji.objects.get_or_create(name=request.data['emoji'])
         response = Response(user=request.user, emoji=emoji)
+        if not CHECK_SEND_LOG:
+            response.save()
+            SendLog.objects.create(response=response, user=request.user, success=True)
+            api_response = APIResponse(data=ResponseSerializer(instance=response).data, status=status.HTTP_201_CREATED)
+            return api_response
         try:
             sendlog = SendLog.objects.filter(success=True).filter(user=request.user).order_by('-ts')[0]
         except SendLog.DoesNotExist:
             return APIResponse(status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         if sendlog.response is None:
-            response.save()
             sendlog.response = response
-            sendlog.save()
+            try:
+                response.save()
+                sendlog.save()
+            except ValidationError:
+                return APIResponse(data={"Error": "Survey has expired"}, status=status.HTTP_403_FORBIDDEN)
             api_response = APIResponse(data=ResponseSerializer(instance=response).data, status=status.HTTP_201_CREATED)
         else:
             api_response = APIResponse(status=status.HTTP_503_SERVICE_UNAVAILABLE)
