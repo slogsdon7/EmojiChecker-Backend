@@ -8,9 +8,6 @@ from phonenumber_field.modelfields import PhoneNumberField
 from api.sms import SMS
 
 
-def get_expiration():
-    return datetime.now() + timedelta(minutes=10)
-
 class User(AbstractUser):
     phone_number = PhoneNumberField(unique=True, help_text="Use E164 Format")
     birth_date = models.DateField()
@@ -83,9 +80,16 @@ class Schedule(models.Model):
 
     def send_scheduled_message(self):
         users = self.users.all()
-        sms_obj = SMS(message=self.message.text)
 
         for user in users:
+            message = self.message.text
+            # template variable replacement using str.format()
+            message.format(
+                first_name=user.first_name,
+                last_name=user.last_name,
+                username=user.username,
+            )
+            sms_obj = SMS(message=message)
             response = user.send_message(sms_obj)
             if 'MessageID' in response:
                 self.sendlog_set.create(success=True, user=user)
