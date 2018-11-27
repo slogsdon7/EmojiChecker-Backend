@@ -10,6 +10,7 @@ from api.serializers import EmojiSerializer, MessageSerializer, ResponseSerializ
 # TODO: quick-fix for testing purposes. Turn into a config variable.
 CHECK_SEND_LOG = True
 
+
 class IsAdminOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
@@ -43,6 +44,7 @@ class ResponseViewSet(viewsets.ModelViewSet):
     serializer_class = ResponseSerializer
     permission_classes = (IsOwnerReadOnly, permissions.IsAuthenticated)
     filter_fields = ('user',)
+
     def get_queryset(self):
         if self.request.user.is_staff:
             return Response.objects.all()
@@ -60,7 +62,7 @@ class ResponseViewSet(viewsets.ModelViewSet):
         try:
             sendlog = SendLog.objects.filter(success=True).filter(user=request.user).order_by('-ts')[0]
         except SendLog.DoesNotExist:
-            return APIResponse(status=status.HTTP_503_SERVICE_UNAVAILABLE)
+            return APIResponse(data={"Error": "No surveys to complete"}, status=status.HTTP_403_FORBIDDEN)
 
         if sendlog.response is None:
             sendlog.response = response
