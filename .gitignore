@@ -1,0 +1,5 @@
+
+.DS_Store
+db.sqlite3
+api/migrations/0001_initial.py
+emoji/settings_prod.py
